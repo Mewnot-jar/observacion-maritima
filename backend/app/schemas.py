@@ -17,3 +17,15 @@ class ObservationOut(BaseModel):
     notes: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
+
+class ObservationCreate(BaseModel):
+    species_id: Optional[uuid.UUID] = None
+    observed_at: datetime
+    latitude: float
+    longitude: float
+    location_name: Optional[str] = None
+    individual_count: Optional[str] = None
+    confidence_level: str = "segura"
+    conditions: Optional[dict] = None
+    notes: Optional[str] = None
+    is_alert: bool = False

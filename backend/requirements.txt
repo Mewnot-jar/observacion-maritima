@@ -6,3 +6,4 @@ python-dotenv
 pydantic-settings
 geoalchemy2
 shapely
+pyjwt[crypto]
