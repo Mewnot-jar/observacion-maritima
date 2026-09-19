@@ -1,5 +1,6 @@
 import { getObservations } from "@/lib/api";
 import { timeAgo } from "@/lib/format";
+import { AuthStatus } from "@/components/AuthStatus";
 
 export default async function feedPage(){
   const observations = await getObservations();
@@ -7,13 +8,14 @@ export default async function feedPage(){
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col bg-paper">
       <header className="flex flex-col gap-3 border-b border-hairline px-5 pb-4 pt-6">
-        <h1 className="font-serif-display text-3xl font-semibold text-ink">
-          Avistamientos
-        </h1>
-        <button className="w-fit rounded-full border border-hairline bg-paper-alt px-3 py-1.5 text-sm text-ink-muted">
-          Iquique, Tarapacá
-        </button>
-      </header>
+      <div className="flex items-center justify-between">
+        <h1 className="font-serif-display text-3xl font-semibold text-ink">Avistamientos</h1>
+        <AuthStatus />
+      </div>
+      <button className="w-fit rounded-full border border-hairline bg-paper-alt px-3 py-1.5 text-sm text-ink-muted">
+        Iquique, Tarapacá
+      </button>
+    </header>
 
       <main className="flex flex-1 flex-col gap-3.5 px-5 py-4 pb-16">
         {observations.length === 0 && (
