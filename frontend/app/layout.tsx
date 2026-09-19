@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Petrona, Work_Sans } from "next/font/google";
+import { BottomNav } from "@/components/BottomNav";
 import "./globals.css";
 
 const petrona = Petrona({
@@ -26,6 +27,7 @@ export default function RootLayout({
     <html lang="es">
       <body className={`${petrona.variable} ${workSans.variable} antialiased`}>
         {children}
+        <BottomNav />
       </body>
     </html>
   )

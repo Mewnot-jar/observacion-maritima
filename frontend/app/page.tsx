@@ -1,5 +1,5 @@
 import { getObservations } from "@/lib/api";
-import { timeAgo } from "@/lib/fromat";
+import { timeAgo } from "@/lib/format";
 
 export default async function feedPage(){
   const observations = await getObservations();
@@ -15,7 +15,7 @@ export default async function feedPage(){
         </button>
       </header>
 
-      <main className="flex flex-1 flex-col gap-3.5 px-5 py-4">
+      <main className="flex flex-1 flex-col gap-3.5 px-5 py-4 pb-16">
         {observations.length === 0 && (
           <p className="py-10 text-center text-sm text-ink-faint">
             Todavía no hay avistamientos reportados.
@@ -27,10 +27,7 @@ export default async function feedPage(){
             key={obs.id}
             className="flex gap-3.5 rounded-2xl border border-hairline bg-white p-3.5"
           >
-            {/* el ícono por categoría lo agregamos cuando el backend
-                también devuelva species.category en el feed */}
             <div className="h-14 w-14 flex-shrink-0 rounded-full bg-accent-soft" />
-
             <div className="flex min-w-0 flex-1 flex-col gap-0.5">
               <div className="flex items-baseline justify-between gap-2">
                 <span className="font-serif-display text-[17px] font-semibold text-ink">
