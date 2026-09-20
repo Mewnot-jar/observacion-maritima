@@ -9,6 +9,7 @@ export default function LoginPage() {
     const supabase = createClient();
 
     const [mode, setMode] = useState<"login" | "signup">("login");
+    const [displayName, setDisplayName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
@@ -22,7 +23,11 @@ export default function LoginPage() {
         const { error } =
             mode === "login"
                 ? await supabase.auth.signInWithPassword({ email, password })
-                : await supabase.auth.signUp({ email, password });
+                : await supabase.auth.signUp({ 
+                    email, 
+                    password,
+                    options: { data: { display_name: displayName || undefined } },
+                });
             
         setLoading(false);
 
@@ -42,6 +47,15 @@ export default function LoginPage() {
             </h1>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                {mode === "signup" && (
+                    <input
+                        type="text"
+                        placeholder="Nombre de usuario"
+                        value={displayName}
+                        onChange={(e) => setDisplayName(e.target.value)}
+                        className="rounded-lg border border-hairline bg-white px-4 py-3 text-sm text-ink"
+                    />
+                )}
                 <input
                 type="email"
                 required
