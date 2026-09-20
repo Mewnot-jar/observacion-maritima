@@ -5,6 +5,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import type { Observation } from "@/lib/api";
 import { timeAgo } from "@/lib/format";
+import Link from "next/link";
 
 const DEFAULT_CENTER: [number, number] = [-20.22, -70.15];
 
@@ -45,6 +46,9 @@ export function ObservationMap({ observations }: { observations: Observation[] }
                             <span className="text-xs text-ink-muted">
                                 {obs.location_name ?? "Ubicación sin nombre"} · {timeAgo(obs.observed_at)}
                             </span>
+                            <Link href={`/observaciones/${obs.id}`} className="mt-1 text-xs font-semibold text-accent">
+                                Ver detalle →
+                            </Link>
                         </div>
                     </Popup>
                 </Marker>

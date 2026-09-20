@@ -1,6 +1,7 @@
 import { getObservations } from "@/lib/api";
 import { timeAgo } from "@/lib/format";
 import { AuthStatus } from "@/components/AuthStatus";
+import Link from "next/link";
 
 export default async function feedPage(){
   const observations = await getObservations();
@@ -25,11 +26,20 @@ export default async function feedPage(){
         )}
 
         {observations.map((obs) => (
-          <article
+          <Link
             key={obs.id}
+            href={`/observaciones/${obs.id}`}
             className="flex gap-3.5 rounded-2xl border border-hairline bg-white p-3.5"
           >
-            <div className="h-14 w-14 flex-shrink-0 rounded-full bg-accent-soft" />
+            {obs.media.length > 0 ? (
+              <img 
+                src={obs.media[0].url} 
+                alt=""
+                className="h-14 w-14 flex-shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <div className="h-14 w-14 flex-shrink-0 rounded-full bg-accent-soft" />
+            )}
             <div className="flex min-w-0 flex-1 flex-col gap-0.5">
               <div className="flex items-baseline justify-between gap-2">
                 <span className="font-serif-display text-[17px] font-semibold text-ink">
@@ -56,7 +66,7 @@ export default async function feedPage(){
                 </span>
               )}
             </div>
-          </article>
+          </Link>
         ))}
       </main>
     </div>

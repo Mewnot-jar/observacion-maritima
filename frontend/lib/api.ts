@@ -3,6 +3,7 @@ const API_URL = process.env.INTERNAL_API_URL ?? "http://backend:8000";
 export type Observation = {
     id: string;
     species_common_name: string | null;
+    species_scientific_name: string | null; 
     category: string | null;
     observed_at: string;
     latitude: number;
@@ -14,6 +15,8 @@ export type Observation = {
     is_alert: boolean;
     is_verified: boolean;
     notes: string | null;
+    reporter_name: string | null; 
+    media: { id: string; url: string; media_type: string }[];
 };
 
 export async function getObservations(): Promise<Observation[]> {
@@ -25,4 +28,17 @@ export async function getObservations(): Promise<Observation[]> {
     }
 
     return res.json();
+}
+
+export async function getObservation(id: string): Promise<Observation | null> {
+  const res = await fetch(`${API_URL}/api/observations/${id}`, {
+    cache: "no-store",
+  });
+
+  if (res.status === 404) return null;
+  if (!res.ok) {
+    throw new Error(`Error al cargar la observación: ${res.status}`);
+  }
+
+  return res.json();
 }
