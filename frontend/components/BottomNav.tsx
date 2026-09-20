@@ -5,29 +5,37 @@ import { usePathname } from "next/navigation";
 
 export function BottomNav() {
     const pathname = usePathname();
-    const items = [
-        { href: "/", label: "Feed", icon: FeedIcon },
-        { href: "/mapa", label: "Mapa", icon: MapIcon },
-    ];
 
     return (
         <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-hairline bg-white">
             <div className="mx-auto flex max-w-md items-center justify-around px-4 py-2.5">
-                {items.map(({ href, label, icon: Icon }) => {
-                    const active = pathname === href;
-                    return (
-                        <Link
-                            key={href}
-                            href={href}
-                            className={`flex flex-col items-center gap-0.5 px-2 py-1 ${
-                                active ? "text-accent" : "text-ink-faint"
-                            }`}
-                        >
-                            <Icon />
-                            <span className="text-[10px]">{label}</span>
-                        </Link>
-                    );
-                })}
+                <Link
+                href="/"
+                className={`flex flex-col items-center gap-0.5 px-2 py-1 ${
+                    pathname === "/" ? "text-accent" : "text-ink-faint"
+                }`}
+                >
+                <FeedIcon />
+                <span className="text-[10px]">Feed</span>
+                </Link>
+
+                <Link
+                href="/nueva"
+                aria-label="Reportar avistamiento"
+                className="-mt-6 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-paper shadow-lg shadow-accent/30"
+                >
+                <PlusIcon />
+                </Link>
+
+                <Link
+                href="/mapa"
+                className={`flex flex-col items-center gap-0.5 px-2 py-1 ${
+                    pathname === "/mapa" ? "text-accent" : "text-ink-faint"
+                }`}
+                >
+                <MapIcon />
+                <span className="text-[10px]">Mapa</span>
+                </Link>
             </div>
         </nav>
     );
@@ -49,4 +57,13 @@ function MapIcon() {
         <circle cx="12" cy="9.5" r="2.3" />
         </svg>
     );
+}
+
+function PlusIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19" />
+      <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  );
 }

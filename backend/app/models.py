@@ -13,7 +13,7 @@ class Profile(Base):
     display_name = Column(Text)
     avatar_url = Column(Text)
     role = Column(Enum("user", "moderator", name="user_role"), nullable=False, default="user")
-    create_at = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 class Species(Base):
     __tablename__ = "species"
@@ -27,7 +27,7 @@ class Species(Base):
     )
     description = Column(Text)
     reference_image_url = Column(Text)
-    create_at = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 class Observation(Base):
     __tablename__ = "observations"
@@ -35,11 +35,12 @@ class Observation(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("profiles.id"), nullable=False)
     species_id = Column(UUID(as_uuid=True), ForeignKey("species.id"))
-
+    category = Column(
+        Enum("ave", "mamifero_marino", "pez", "invertebrado", "alga_flora", "otro", name="species_category"),
+    )
     observed_at = Column(DateTime(timezone=True), nullable=False)
     location = Column(Geography(geometry_type="POINT", srid=4326), nullable=False)
     location_name = Column(Text)
-
     individual_count = Column(String)
     behavior = Column(Text)
     confidence_level = Column(
