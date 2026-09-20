@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AuthProvider } from "@/lib/auth-context";
 import { Petrona, Work_Sans } from "next/font/google";
 import { Sidebar } from "@/components/Sidebar";
 import { BottomNav } from "@/components/BottomNav";
@@ -27,11 +28,13 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${petrona.variable} ${workSans.variable} antialiased`}>
-        <div className="lg:flex">
-          <Sidebar />
-          <div className="min-w-0 flex-1">{children}</div>
-        </div>
-        <BottomNav />
+        <AuthProvider>
+          <div className="lg:flex">
+            <Sidebar />
+            <div className="min-w-0 flex-1">{children}</div>
+          </div>
+          <BottomNav />
+        </AuthProvider>
       </body>
     </html>
   );

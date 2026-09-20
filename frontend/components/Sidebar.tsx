@@ -1,16 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { BirdIcon, FeedIcon, MapIcon, PlusIcon } from "@/components/Icons";
+import { useAuth } from "@/lib/auth-context";
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { session, openLoginModal } = useAuth();
 
   const items = [
     { href: "/", label: "Feed", icon: FeedIcon },
     { href: "/mapa", label: "Mapa", icon: MapIcon },
   ];
+
+  function handleNewObservation() {
+    if (session) {
+      router.push("/nueva");
+    } else {
+      openLoginModal();
+    }
+  }
 
   return (
     <aside className="hidden w-60 flex-shrink-0 flex-col gap-7 border-r border-hairline bg-paper-alt p-6 lg:flex lg:h-screen lg:self-start lg:sticky lg:top-0">
@@ -39,13 +50,13 @@ export function Sidebar() {
 
       <div className="flex-1" />
 
-      <Link
-        href="/nueva"
+      <button
+        onClick={handleNewObservation}
         className="flex items-center justify-center gap-2 rounded-lg bg-accent px-4 py-3 text-sm font-semibold text-paper"
       >
         <PlusIcon />
         Reportar avistamiento
-      </Link>
+      </button>
     </aside>
   );
 }
