@@ -2,21 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getObservation } from "@/lib/api";
 import { timeAgo } from "@/lib/format";
-
-const CATEGORY_LABELS: Record<string, string> = {
-  ave: "Ave",
-  mamifero_marino: "Mamífero marino",
-  pez: "Pez",
-  invertebrado: "Invertebrado",
-  alga_flora: "Alga / flora",
-  otro: "Otro",
-};
-
-const CONFIDENCE_LABELS: Record<string, string> = {
-  segura: "Segura",
-  bastante_segura: "Bastante segura",
-  no_segura: "No estoy seguro",
-};
+import { CATEGORY_LABELS, CONFIDENCE_LABELS } from "@/lib/labels";
 
 export default async function ObservationDetailPage({
   params,
@@ -29,102 +15,104 @@ export default async function ObservationDetailPage({
   if (!observation) notFound(); // Next.js muestra su página 404 por defecto
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-md flex-col bg-paper pb-20">
-      <header className="px-5 pb-2 pt-6">
+    <div className="mx-auto flex min-h-screen max-w-md flex-col bg-paper pb-20 lg:max-w-4xl lg:pb-10">
+      <header className="px-5 pb-2 pt-6 lg:px-0 lg:mt-5">
         <Link href="/" className="flex w-fit items-center gap-1 text-sm text-ink-muted">
           <BackIcon />
           Volver
         </Link>
       </header>
 
-      {observation.media.length > 0 ? (
-        <img 
-          src={observation.media[0].url} 
-          alt={observation.species_common_name ?? ""}
-          className="h-56 w-full object-cover"
-        />
-      ) : (
-        <div className="flex h-56 items-center justify-center bg-accent-soft">
-          <CategoryIcon category={observation.category} />
-        </div>
-      )}
-      <div className="flex flex-col gap-5 px-5 pt-5">
-        <div className="flex flex-col gap-1">
-          <h1 className="font-serif-display text-2xl font-semibold text-ink">
-            {observation.species_common_name ?? "Sin identificar"}
-          </h1>
-          {observation.species_scientific_name && (
-            <span className="text-sm italic text-ink-faint">
-              {observation.species_scientific_name}
+      <div className="lg:flex lg:gap-8">
+        {observation.media.length > 0 ? (
+          <img 
+            src={observation.media[0].url} 
+            alt={observation.species_common_name ?? ""}
+            className="h-56 w-full object-cover lg:h-[420px] lg:w-[420px] lg:flex-shrink-0 lg:rounded-2xl"
+          />
+        ) : (
+          <div className="flex h-56 items-center justify-center bg-accent-soft lg:h-[420px] lg:w-[420px] lg:flex-shrink-0 lg:rounded-2xl">
+            <CategoryIcon category={observation.category} />
+          </div>
+        )}
+        <div className="flex flex-col gap-5 px-5 pt-5 lg:flex-1 lg:px-0 lg:pt-0">
+          <div className="flex flex-col gap-1">
+            <h1 className="font-serif-display text-2xl font-semibold text-ink">
+              {observation.species_common_name ?? "Sin identificar"}
+            </h1>
+            {observation.species_scientific_name && (
+              <span className="text-sm italic text-ink-faint">
+                {observation.species_scientific_name}
+              </span>
+            )}
+            <span className="mt-1 w-fit rounded-full bg-accent-soft px-2.5 py-1 text-xs font-semibold text-accent">
+              Confianza: {CONFIDENCE_LABELS[observation.confidence_level] ?? observation.confidence_level}
             </span>
+          </div>
+
+          {observation.is_alert && (
+            <div className="flex items-start gap-2.5 rounded-xl border border-alert/30 bg-alert-soft p-4">
+              <AlertIcon />
+              <span className="text-sm text-ink">
+                Marcado como alerta — posible individuo varado, herido o muerto.
+              </span>
+            </div>
           )}
-          <span className="mt-1 w-fit rounded-full bg-accent-soft px-2.5 py-1 text-xs font-semibold text-accent">
-            Confianza: {CONFIDENCE_LABELS[observation.confidence_level] ?? observation.confidence_level}
+
+          <div className="flex flex-col gap-3">
+            {observation.location_name && (
+              <div className="flex items-center gap-2.5 text-sm text-ink">
+                <PinIcon />
+                {observation.location_name}
+              </div>
+            )}
+            <div className="flex items-center gap-2.5 text-sm text-ink">
+              <CalendarIcon />
+              {new Date(observation.observed_at).toLocaleString("es-CL", {
+                dateStyle: "medium",
+                timeStyle: "short",
+              })}
+              <span className="text-ink-faint">· {timeAgo(observation.observed_at)}</span>
+            </div>
+            {observation.reporter_name && (
+              <div className="flex items-center gap-2.5 text-sm text-ink">
+                <UserIcon />
+                Reportado por {observation.reporter_name}
+              </div>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-2.5">
+            <InfoCard label="Individuos" value={observation.individual_count ?? "—"} />
+            <InfoCard label="Comportamiento" value={observation.behavior ?? "No registrado"} />
+            <InfoCard
+              label="Categoría"
+              value={CATEGORY_LABELS[observation.category ?? ""] ?? "Sin categoría"}
+            />
+            <InfoCard
+              label="Estado"
+              value={
+                observation.is_alert
+                  ? "Alerta activa"
+                  : observation.is_verified
+                    ? "Verificado"
+                    : "Sin verificar"
+              }
+              tone={observation.is_alert ? "alert" : observation.is_verified ? "accent" : "muted"}
+            />
+          </div>
+
+          {observation.notes && (
+            <div className="flex flex-col gap-2">
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-ink-muted">Notas</h2>
+              <p className="text-sm leading-relaxed text-ink">{observation.notes}</p>
+            </div>
+          )}
+
+          <span className="text-xs text-ink-faint">
+            {observation.latitude.toFixed(4)}, {observation.longitude.toFixed(4)}
           </span>
         </div>
-
-        {observation.is_alert && (
-          <div className="flex items-start gap-2.5 rounded-xl border border-alert/30 bg-alert-soft p-4">
-            <AlertIcon />
-            <span className="text-sm text-ink">
-              Marcado como alerta — posible individuo varado, herido o muerto.
-            </span>
-          </div>
-        )}
-
-        <div className="flex flex-col gap-3">
-          {observation.location_name && (
-            <div className="flex items-center gap-2.5 text-sm text-ink">
-              <PinIcon />
-              {observation.location_name}
-            </div>
-          )}
-          <div className="flex items-center gap-2.5 text-sm text-ink">
-            <CalendarIcon />
-            {new Date(observation.observed_at).toLocaleString("es-CL", {
-              dateStyle: "medium",
-              timeStyle: "short",
-            })}
-            <span className="text-ink-faint">· {timeAgo(observation.observed_at)}</span>
-          </div>
-          {observation.reporter_name && (
-            <div className="flex items-center gap-2.5 text-sm text-ink">
-              <UserIcon />
-              Reportado por {observation.reporter_name}
-            </div>
-          )}
-        </div>
-
-        <div className="grid grid-cols-2 gap-2.5">
-          <InfoCard label="Individuos" value={observation.individual_count ?? "—"} />
-          <InfoCard label="Comportamiento" value={observation.behavior ?? "No registrado"} />
-          <InfoCard
-            label="Categoría"
-            value={CATEGORY_LABELS[observation.category ?? ""] ?? "Sin categoría"}
-          />
-          <InfoCard
-            label="Estado"
-            value={
-              observation.is_alert
-                ? "Alerta activa"
-                : observation.is_verified
-                  ? "Verificado"
-                  : "Sin verificar"
-            }
-            tone={observation.is_alert ? "alert" : observation.is_verified ? "accent" : "muted"}
-          />
-        </div>
-
-        {observation.notes && (
-          <div className="flex flex-col gap-2">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-ink-muted">Notas</h2>
-            <p className="text-sm leading-relaxed text-ink">{observation.notes}</p>
-          </div>
-        )}
-
-        <span className="text-xs text-ink-faint">
-          {observation.latitude.toFixed(4)}, {observation.longitude.toFixed(4)}
-        </span>
       </div>
     </div>
   );
