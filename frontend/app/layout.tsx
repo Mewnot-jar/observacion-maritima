@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Petrona, Work_Sans } from "next/font/google";
+import { Sidebar } from "@/components/Sidebar";
 import { BottomNav } from "@/components/BottomNav";
 import "./globals.css";
 
@@ -26,10 +27,13 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${petrona.variable} ${workSans.variable} antialiased`}>
-        {children}
+        <div className="lg:flex">
+          <Sidebar />
+          <div className="min-w-0 flex-1">{children}</div>
+        </div>
         <BottomNav />
       </body>
     </html>
-  )
+  );
 }
 

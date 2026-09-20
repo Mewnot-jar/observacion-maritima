@@ -8,8 +8,8 @@ import uuid as uuid_lib
 
 from app.database import get_db
 from app.models import Observation, Species, Profile, Media
-from app.schemas import ObservationOut, ObservationCreate, MediaOut
-from app.auth import get_current_user, CurrentUser
+from app.schemas import ObservationOut, ObservationCreate, MediaOut, ObservationModeration, ModerationStatusOut
+from app.auth import get_current_user, CurrentUser, require_moderator
 from app.storage import upload_photo, get_public_url
 
 router = APIRouter(prefix="/api/observations", tags=["observations"])
@@ -178,3 +178,24 @@ async def upload_observation_media(
     db.refresh(media)
 
     return MediaOut(id=media.id, url=get_public_url(storage_path), media_type=media.media_type)
+
+@router.patch("/{observation_id}/moderation", response_model=ModerationStatusOut)
+def moderate_observation(
+    observation_id: uuid_lib.UUID,
+    payload: ObservationModeration,
+    current_user: CurrentUser = Depends(require_moderator),
+    db: Session = Depends(get_db),
+):
+    observation = db.query(Observation).filter(Observation.id == observation_id).first()
+    if not observation:
+        raise HTTPException(status_code=404, detail="Observacion no encontrada")
+
+    if payload.is_hidden is not None:
+        observation.is_hidden = payload.is_hidden
+    if payload.is_verified is not None:
+        observation.is_verified = payload.is_verified
+
+    db.commit()
+    db.refresh(observation)
+
+    return ModerationStatusOut(is_hidden=observation.is_hidden, is_verified=observation.is_verified)

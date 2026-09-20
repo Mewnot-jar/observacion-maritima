@@ -138,7 +138,7 @@ export default function NuevaObservacionPage() {
     }
 
     return (
-        <div className="mx-auto flex min-h-screen max-w-md flex-col gap-5 bg-paper px-5 pb-24 pt-6">
+        <div className="mx-auto flex min-h-screen max-w-md flex-col gap-5 bg-paper px-5 pb-24 pt-6 lg:max-w-xl lg:px-0 lg:pb-10">
             <h1 className="font-serif-display text-2xl font-semibold text-ink">Nueva observación</h1>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
@@ -219,7 +219,7 @@ export default function NuevaObservacionPage() {
                             Usar mi ubicación
                         </button>
                     </div>
-                    <div className="h-48 overflow-hidden rounded-xl border border-hairline">
+                    <div className="h-48 overflow-hidden rounded-xl border border-hairline lg:h-64">
                         <LocationPicker position={position} onChange={setPosition} />
                     </div>
                     <input
