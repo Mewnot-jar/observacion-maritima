@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, type SubmitEvent } from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { SpeciesAutocomplete } from "@/components/SpeciesAutocomplete";
+import { useAuth } from "@/lib/auth-context";
 
 const LocationPicker = dynamic(
     () => import("@/components/LocationPicker").then((mod) => mod.LocationPicker),
@@ -38,6 +39,7 @@ type Species = { id: string; common_name: string; scientific_name: string | null
 export default function NuevaObservacionPage() {
     const router = useRouter();
     const supabase = createClient();
+    const { session, loading: authLoading, openLoginModal } = useAuth();
 
     const [category, setCategory] = useState<string | null>(null);
     const [species, setSpecies] = useState<Species | null>(null);
@@ -54,6 +56,13 @@ export default function NuevaObservacionPage() {
     const [error, setError] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
 
+    useEffect(() => {
+    if (!authLoading && !session) {
+      router.replace("/");
+      openLoginModal();
+    }
+  }, [authLoading, session, router, openLoginModal]);
+    
     function useMyLocation() {
         navigator.geolocation.getCurrentPosition(
             (pos) => setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
@@ -137,6 +146,8 @@ export default function NuevaObservacionPage() {
         router.refresh();
     }
 
+    if (authLoading || !session) return null;
+    
     return (
         <div className="mx-auto flex min-h-screen max-w-md flex-col gap-5 bg-paper px-5 pb-24 pt-6 lg:max-w-xl lg:px-0 lg:pb-10">
             <h1 className="font-serif-display text-2xl font-semibold text-ink">Nueva observación</h1>

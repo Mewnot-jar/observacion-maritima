@@ -1,11 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FeedIcon, MapIcon, PlusIcon } from "@/components/Icons";
+import { useAuth } from "@/lib/auth-context";
 
 export function BottomNav() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { session, openLoginModal } = useAuth();
+
+  function handleNewObservation() {
+    console.log("Aprete" + session)
+    if (session) {
+      router.push("/nueva");
+    } else {
+      openLoginModal();
+    }
+  }
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-hairline bg-white lg:hidden">
@@ -20,13 +32,13 @@ export function BottomNav() {
           <span className="text-[10px]">Feed</span>
         </Link>
 
-        <Link
-          href="/nueva"
+        <button
+          onClick={handleNewObservation}
           aria-label="Reportar avistamiento"
           className="-mt-6 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-paper shadow-lg shadow-accent/30"
         >
           <PlusIcon />
-        </Link>
+        </button>
 
         <Link
           href="/mapa"
