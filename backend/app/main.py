@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers import observations
 from app.routers import species
 
-app = FastAPI(title="Observacion Maritima API")
+app = FastAPI(title="Observacion Maritima Api")
 
 app.add_middleware(
     CORSMiddleware,

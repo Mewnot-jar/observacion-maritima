@@ -3,9 +3,17 @@ from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict
 
+class MediaOut(BaseModel):
+    id: uuid.UUID
+    url: str
+    media_type: str
+
+    model_config = ConfigDict(from_attributes=True)
+
 class ObservationOut(BaseModel):
     id: uuid.UUID
     species_common_name: Optional[str] = None
+    species_scientific_name: Optional[str] = None
     category: Optional[str] = None
     observed_at: datetime
     latitude: float
@@ -17,6 +25,8 @@ class ObservationOut(BaseModel):
     is_alert: bool
     is_verified: bool
     notes: Optional[str] = None
+    reporter_name: Optional[str] = None
+    media: list[MediaOut] = []
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -41,3 +51,4 @@ class SpeciesOut(BaseModel):
     category: str
 
     model_config = ConfigDict(from_attributes=True)
+

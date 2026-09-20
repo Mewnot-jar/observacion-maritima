@@ -7,3 +7,5 @@ pydantic-settings
 geoalchemy2
 shapely
 pyjwt[crypto]
+supabase
+python-multipart
