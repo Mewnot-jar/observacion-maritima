@@ -3,6 +3,8 @@ from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict
 
+from app.auth import get_current_user, CurrentUser, require_moderator
+
 class MediaOut(BaseModel):
     id: uuid.UUID
     url: str
@@ -51,4 +53,12 @@ class SpeciesOut(BaseModel):
     category: str
 
     model_config = ConfigDict(from_attributes=True)
+
+class ObservationModeration(BaseModel):
+    is_hidden: Optional[bool] = None
+    is_verified: Optional[bool] = None
+
+class ModerationStatusOut(BaseModel):
+    is_hidden: bool
+    is_verified: bool
 

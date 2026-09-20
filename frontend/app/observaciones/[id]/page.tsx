@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getObservation } from "@/lib/api";
 import { timeAgo } from "@/lib/format";
 import { CATEGORY_LABELS, CONFIDENCE_LABELS } from "@/lib/labels";
+import { ModerationPanel } from "@/components/ModerationPanel";
 
 export default async function ObservationDetailPage({
   params,
@@ -108,7 +109,7 @@ export default async function ObservationDetailPage({
               <p className="text-sm leading-relaxed text-ink">{observation.notes}</p>
             </div>
           )}
-
+          <ModerationPanel observationId={observation.id} initialIsVerified={observation.is_verified} />
           <span className="text-xs text-ink-faint">
             {observation.latitude.toFixed(4)}, {observation.longitude.toFixed(4)}
           </span>
