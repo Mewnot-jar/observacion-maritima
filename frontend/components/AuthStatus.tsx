@@ -36,7 +36,7 @@ export function AuthStatus() {
 
     return (
         <button onClick={() => supabase.auth.signOut()} className="text-sm text-ink-muted">
-            {session.user.email} · Salir
+            Salir
         </button>
     );
 }
